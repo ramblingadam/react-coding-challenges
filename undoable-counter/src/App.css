@@ -1,0 +1,60 @@
+*{ box-sizing: border-box}
+main {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.doButtons-wrapper {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  gap: 25px;
+  margin-bottom: 25px;
+}
+
+button {
+  border-radius: 0;
+  border: 2px solid black;
+  height: 30px;
+  width: 50px;
+  cursor: pointer;
+}
+
+button:not(:disabled):hover {
+  background: yellow;
+}
+
+.addButtons-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.current-value {
+  width: 60px;
+}
+
+.history-list {
+  border: 2px solid black;
+  height: 200px;
+  width: 300px;
+  overflow-y:scroll;
+  padding: 10px;
+}
+
+.history-li {
+  list-style-type: none;
+  list-style-position: outside;
+  display: flex;
+  justify-content: flex-start;
+  text-align: left;
+  margin-bottom: 5px;
+}
+
+.btn-pressed {
+  width: 100px;
+}
