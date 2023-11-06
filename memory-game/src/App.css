@@ -1,0 +1,60 @@
+main {
+  text-align: center;
+  vertical-align: center;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  margin-bottom: 400px;
+}
+
+.board-wrapper {
+  width: 400px;
+  /* border: 1px solid black; */
+  display: flex;
+  flex-flow: row wrap;
+  flex-basis: 16%;
+  justify-content: space-between;
+  gap: 5px;
+}
+
+.card-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* border: 1px solid red; */
+  height: 50px;
+  
+  flex-basis: 15%;
+}
+
+.card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid black;
+  height: 100%;
+  width: 50px;
+  cursor: pointer;
+}
+
+.unselected {
+  opacity: 0;
+}
+
+.selected {
+  cursor: not-allowed;
+}
+
+.cleared {
+  opacity: 0;
+  cursor: unset;
+  pointer-events: none;
+}
+
+button {
+  border: 2px solid black;
+  border-radius: 0px;
+  padding: 10px;
+  width: 200px;
+  cursor: pointer;
+}
