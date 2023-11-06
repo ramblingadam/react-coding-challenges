@@ -1,0 +1,98 @@
+main {
+  text-align: center;
+  vertical-align: center;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  margin-bottom: 200px;
+}
+
+.board-wrapper {
+  /* outline: 2px solid red; */
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.row {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.card-wrapper {
+  height: 40px;
+  width: 40px;
+  margin: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  perspective: 100px;
+}
+
+.content {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  transition: .5s;
+  transform-style: preserve-3d;
+  border: 1px solid black;
+}
+
+.card-back {
+  background: grey;
+  transition: .3s;
+}
+
+.card-back:hover {
+  background: lightblue;
+}
+
+.card-front {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: rotateY(180deg);
+  background: white;
+}
+
+.card-back, .card-front {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  backface-visibility: hidden;
+}
+
+.card-wrapper.selected .content {
+  transform: rotateY(180deg);
+  /* border: 1px solid red; */
+}
+
+.cleared {
+  pointer-events: none;
+}
+
+.card-wrapper.cleared .content{
+  transform: rotateX(180deg) scale(0);
+  transition: 1s;
+}
+
+button {
+  border-radius: 0px;
+  margin: 5px;
+  width: 100px;
+  padding: 5px;
+  cursor: pointer;
+}
+/* 
+@keyframes disappear {
+  60% {
+    transform: scale(0);
+  }
+} */
