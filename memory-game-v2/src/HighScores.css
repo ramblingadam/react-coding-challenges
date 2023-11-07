@@ -1,0 +1,49 @@
+.high-scores-wrapper {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.high-score-tables-wrapper {
+  display: flex;
+  
+}
+
+.scores-list-wrapper {
+  width: 80px;
+  margin: 15px;
+}
+
+.score-wrapper {
+  font-family: monospace;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.high-scores-heading {
+  font-weight: bold;
+}
+.easy .high-scores-heading {
+  font-weight: bold;
+}
+
+.new-high-score-label {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.new-high-score-input {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  text-align: center;
+  padding: 5px;
+  width: 100px;
+  margin-top: 5px;
+  border: 2px solid black;
+}

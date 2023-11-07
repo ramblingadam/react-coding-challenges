@@ -20,151 +20,244 @@ need index to keeptrack of which was clicked on first, so that clicking on it ag
 
 
 import './App.css'
-import {useState} from 'react'
+import { useState } from 'react'
 
 import buildDeck from './utils.tsx'
 import Card from './Card.tsx'
+import Timer from './Timer.tsx'
+import TitleCard from './TitleCard.tsx'
+import DeckSelectCard from './DeckSelectCard.tsx'
+import HighScores from './HighScores.tsx'
 
+const APP_TITLE = 'MEMORIA'
+const VICTORY_TEXT = 'YOU WIN!'
 
 export default function App() {
+  const [gameState, setGameState] = useState('new')
+  
   const [deck, setDeck] = useState(buildDeck(18))
   const [size, setSize] = useState(new Array(6).fill(6))
+  const [selectedDeck, setSelectedDeck] = useState('numbers')
+  const [difficulty, setDifficulty] = useState(null)
+  
   const [selected, setSelected] = useState(null)
   const [delayRunning, setDelayRunning] = useState(false)
-  const [gameState, setGameState] = useState('new')
 
-  const handleDifficultyClick = (difficulty) => {
-    switch(difficulty) {
+  const [timerRunning, setTimerRunning] = useState(false)
+  const [resetTimer, setResetTimer] = useState(true)
+  const [elapsedSeconds, setElapsedSeconds] = useState(0)
+  
+
+
+
+
+
+  
+
+  const handleDifficultyClick = (difficulty: string) => {
+    switch (difficulty) {
       case 'easy':
         console.log('Easy selected.')
+        setDifficulty('easy')
         setSize(new Array(4).fill(4))
-        setDeck(buildDeck(8))
+        setDeck(buildDeck(8, selectedDeck))
         break
       case 'medium':
         console.log('Medium selected.')
+        setDifficulty('medium')
         setSize(new Array(6).fill(6))
-        setDeck(buildDeck(18))
+        setDeck(buildDeck(18, selectedDeck))
         break
       case 'hard':
         console.log('Hard selected.')
+        setDifficulty('hard')
         setSize(new Array(8).fill(8))
-        setDeck(buildDeck(32))
+        setDeck(buildDeck(32, selectedDeck))
         break
       default:
         console.log(`SHOULDN'T BE HERE`)
     }
     setGameState('active')
+    setResetTimer(true)
+    setTimerRunning(true)
   }
 
 
   const handleResetClick = () => {
     setGameState('new')
+    setTimerRunning(false)
+    setDifficulty(null)
   }
 
-  
-  const handleCardClick = (card, i) => {
-    if(delayRunning) return
-    
-    // console.log('clicked')
-    // console.log(deck)
-    // console.log(i)
-    if(delayRunning) return
 
-    if(selected === null) {
+  const handleCardClick = (card, i) => {
+    if (delayRunning) return
+
+    if (selected === null) {
       // const deckCopy = deck
       const deckCopy = deck.map((card, cardI) => {
-        if(cardI === i) {
-          return {...card, selected: true}
+        if (cardI === i) {
+          return { ...card, selected: true }
         } else return card
       })
       setDeck(deckCopy)
-      setSelected({...card, i})
+      setSelected({ ...card, i })
       return
     }
 
-    
-    if(selected.i === i) {
-      console.log('already selected')
+
+    if (selected.i === i) {
+      // console.log('already selected')
       return
     } else {
       setDelayRunning(true)
       let deckCopy = deck.map((card, cardI) => {
-        if(cardI === i) {
-          return {...card, selected: true}
+        if (cardI === i) {
+          return { ...card, selected: true }
         } else return card
       })
       setDeck(deckCopy)
     }
 
-    if(selected.value === card.value) {
-      console.log('match found!')
+    if (selected.value === card.value) {
+      // console.log('match found!')
 
       setTimeout(() => {
         const deckCopy = deck.map((card) => {
-          if(card.value === selected.value) return {...card, cleared: true}
+          if (card.value === selected.value) return { ...card, cleared: true }
           else return card
         })
-        if(deckCopy.every(card => card.cleared === true)) {
+        if (deckCopy.every(card => card.cleared === true)) {
           console.log('YOU WIN!')
+          setTimerRunning(false)
           setTimeout(() => {
             setGameState('over')
             setDelayRunning(false)
-            }, 1000)
+          }, 1000)
         }
         setDeck(deckCopy)
         setSelected(null)
         setDelayRunning(false)
       }, 800)
     } else { //mismatch
-      console.log('mismatch!')
+      // console.log('mismatch!')
       setTimeout(() => {
         const deckCopy = deck.map((card) => {
-          return {...card, selected: false}
+          return { ...card, selected: false }
         })
         setDeck(deckCopy)
         setSelected(null)
         setDelayRunning(false)
       }, 800)
     }
-    
+
   }
 
-  
+  const handleDeckSelect = (e) => {
+    console.log(e.target.value)
+    setSelectedDeck(e.target.value)
+  }
+
+
+
   return (
     <main>
-      <h1>Memory Game REDUX</h1>
-      {gameState === 'new' &&  
-         (
-          <section className='difficulty-select'>
-            <button onClick={() => handleDifficultyClick('easy')}>Easy</button>
-            <button onClick={() => handleDifficultyClick('medium')}>Medium</button>
-            <button onClick={() => handleDifficultyClick('hard')}>Hard</button>
-          </section>
-        )   
-      }
-
-      {gameState === 'active' && (
-      <section className='board-wrapper'>
-        {size.map((row, rowI) => (
-          <div className='row' key={rowI}>
-            {deck.slice(rowI * size.length, size.length * (rowI + 1)).map((card, i) => (
-              <Card key={i} value={card.value} selected={card.selected} cleared={card.cleared} handleCardClick={() => handleCardClick(card, rowI * size.length + i)}/>
-            ))}
-          </div>
+      <h1 className='title-wrapper'>  
+        {APP_TITLE.split('').map((char, i) => (
+          <TitleCard value={char} gameState={gameState} key={i}/>
         ))}
-      </section> 
+      </h1>
+
+
+      
+      {/* DECK SELECTION */}
+      {gameState === 'new' && (
+        <section className='deck-select-wrapper'>
+          <h2 className='deck-select-heading'>Choose Your Deck:</h2>
+          <div className='deck-select-options'>
+            <label className='deck-select-option'>
+              {/* Numbers */}
+              <DeckSelectCard value={12} selected={selectedDeck==='numbers'}/>
+              <input type='radio' name='deck-type' value='numbers' id='numbers' onClick={handleDeckSelect}/> 
+            </label>
+            <label className='deck-select-option'>
+              {/* Emoji */}
+              <DeckSelectCard value={'💖'} selected={selectedDeck==='emoji'}/>
+              <input type='radio' name='deck-type' value='emoji' id='emoji' onClick={handleDeckSelect}/> 
+            </label>
+          </div>
+
+        </section>
       )}
 
-      {gameState === 'over' && (
-      <h2>YOU WIN!</h2>
-      )}
-      
-      {gameState !== 'new' &&  
-         (
-           <button onClick={handleResetClick}>Reset</button>
-         )   
+      {/* DIFFICULTY SELECT */}
+      {gameState === 'new' &&
+        (
+          <section className='difficulty-select'>
+            <button 
+              onClick={() => handleDifficultyClick('easy')} 
+              className='btn-easy'>Easy</button>
+            <button 
+              onClick={() => handleDifficultyClick('medium')} 
+              className='btn-medium'>Medium</button>
+            <button 
+              onClick={() => handleDifficultyClick('hard')} 
+              className='btn-hard'>Hard</button>
+          </section>
+        )
       }
+
+
+      {/* VICTORY TEXT */}
+        {gameState === 'over' && (
+          <h1 className='victory-text'>
+            {VICTORY_TEXT.split('').map((char, i) => (
+            <TitleCard value={char} key={i} bannerType={'victory'} index={i}/>
+            ))}
+          </h1>
+        )}
+
+      
+      {/* HIGH SCORES */}
+      {gameState !== 'active' && (
+        <HighScores difficulty={difficulty} gameState={gameState} elapsedSeconds={elapsedSeconds}/>
+      )}
+
+      {/* TIMER */}
+      {gameState !== 'new' && (
+        <Timer timerRunning={timerRunning} resetTimer={resetTimer} setResetTimer={setResetTimer} gameState={gameState} elapsedSeconds={elapsedSeconds} setElapsedSeconds={setElapsedSeconds}/>
+      )}
+
+      
+      {/* GAME BOARD */}
+      {gameState === 'active' && (
+        <section className='board-wrapper'>
+          {size.map((row, rowI) => (
+            <div className='row' key={rowI}>
+              {deck.slice(rowI * size.length, size.length * (rowI + 1)).map((card, i) => (
+                <Card key={i} value={card.value} selected={card.selected} cleared={card.cleared} handleCardClick={() => handleCardClick(card, rowI * size.length + i)} />
+              ))}
+            </div>
+          ))}
+        </section>
+      )}
+
   
+
+    
+      
+      {/* RESET BUTTON */}
+      {gameState !== 'new' &&
+        (
+          <button
+            onClick={handleResetClick}
+            className={`btn-reset`}
+          >
+            Reset
+          </button>
+        )
+      }
+
     </main>
   )
 }

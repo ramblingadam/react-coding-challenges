@@ -1,20 +1,20 @@
 import './Card.css'
 
-const Card = ({value, selected, cleared, handleCardClick}) => {
+const Card = ({value, selected}) => {
+
+  
   return (
     <div 
-      className={`card-wrapper game-card
-        ${cleared ? ' cleared' : ''}
-        ${selected ? ' selected' : ''}`
+      className={`select-deck-card-wrapper card-wrapper
+        ${selected ? ' selected-deck' : ''}`
       } 
-      onClick={handleCardClick}
     >
       <div className='content'>
         <div className={`card-back`}></div>
         <div className='card-front'>{value}</div>
       </div>
 
-      
+
     </div>
   )
 }

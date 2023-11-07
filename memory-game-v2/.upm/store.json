@@ -1,1 +1,1 @@
-{"version":2,"languages":{"nodejs-npm":{"specfileHash":"21a44d27dcac5d79c8a1f4fb8a24cc77","lockfileHash":"52d4a9251657875294258be063850cd5","guessedImports":["react-dom","vite","@vitejs/plugin-react","react"],"guessedImportsHash":"ddabe22d81b6101c4d8778913cae050f"}}}
+{"version":2,"languages":{"nodejs-npm":{"specfileHash":"21a44d27dcac5d79c8a1f4fb8a24cc77","lockfileHash":"52d4a9251657875294258be063850cd5","guessedImports":["@vitejs/plugin-react","react","react-dom","vite"],"guessedImportsHash":"bc7ef2a0a0d40df51e5daad464cab7d8"}}}

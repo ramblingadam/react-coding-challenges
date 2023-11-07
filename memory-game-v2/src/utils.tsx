@@ -1,3 +1,5 @@
+const EMOJI_PICS = ['🙂', '😁', '😅','🤣', '🙃', '😇', '🥰', '🤩','🤪','🤫','🙄','😴','🤢','🥵','🥶','🤯','🤠','🥳','😎','🤓','🧐','🙁','😲','😳','😨','😭','😱', '😖','😩','😡', '😤','🤬','😈','💀','💩','🤡','👹','👺','👻','👽','👾','🤖', '😸','😹','😻','🙀','🙈','🙉','🙊','💖','💋','💥','💫','💦','👁️‍🗨️','🧠','🦷','🦿','👃','🦴','🧑','🧔','👧','👨‍🦰','👨‍🦱','👨‍🦳','👩','👩‍🦰','👩‍🦱','👩‍🦳','👱‍♀️','👴','👵', '🧛','🧙','🧜‍♀️','🧞','🧟','🧟‍♀️','🏇']
+
 class CardClass {
   value: number
   selected: boolean
@@ -29,7 +31,12 @@ function shuffle(array) {
 
 
 
-const buildDeck = (numbers) => {
+const buildDeck = (numOfPairs, deckType) => {
+  let emojiPics
+  if(deckType === 'emoji') {
+    emojiPics = shuffle(EMOJI_PICS).slice(0, numOfPairs)
+  }
+  
   const deck = []
   // let rowSize:number = 0
   // switch(difficulty) {
@@ -44,9 +51,17 @@ const buildDeck = (numbers) => {
   //     break
   // }
   
-  for (let i = 0; i < numbers; i++) {
-    deck.push(new CardClass(i))
-    deck.push(new CardClass(i))
+  for (let i = 0; i < numOfPairs; i++) {
+    switch (deckType) {
+      case 'emoji':
+        deck.push(new CardClass(emojiPics[i]))
+        deck.push(new CardClass(emojiPics[i]))
+        break
+      default:
+        deck.push(new CardClass(i))
+        deck.push(new CardClass(i))
+    }
+
   }
   return shuffle(deck)
 }
