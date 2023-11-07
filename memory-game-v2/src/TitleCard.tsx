@@ -28,9 +28,6 @@ const TitleCard: React.FC<TitleCardProps> = ({value, gameState, bannerType, inde
         delay = setTimeout(() => {
           setFlipped(false)
           setSpinning(true)
-          // interval = setInterval(() => {
-          //   setFlipped((prevFlipState) => !prevFlipState)
-          // }, 500)
         }, 100 * index)
 
         break

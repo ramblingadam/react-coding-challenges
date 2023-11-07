@@ -1,6 +1,7 @@
 import './Card.css'
 
-const Card = ({value, selected}) => {
+const Card = ({value, selected, deckIcon}) => {
+  
 
   
   return (
@@ -10,7 +11,7 @@ const Card = ({value, selected}) => {
       } 
     >
       <div className='content'>
-        <div className={`card-back`}></div>
+        <div className={`card-back`}>{deckIcon}</div>
         <div className='card-front'>{value}</div>
       </div>
 

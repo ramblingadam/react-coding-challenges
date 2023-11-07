@@ -5,7 +5,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
+
   position: relative;
   perspective: 100px;
   border-radius: 5px;
@@ -13,20 +13,26 @@
   font-weight: bold;
 }
 
+.game-card,
+.select-deck-card {
+  cursor: pointer;
+}
+
 /* .card-wrapper:not(.select-deck-card-wrapper.selected-deck):hover {
   box-shadow: 5px 5px black;
   transform: translate(-5px, -5px);
 } */
-.card-wrapper:hover,
-.card-wrapper.select-deck-wrapper:hover {
+/* .game-card:hover, */
+.select-deck-card:hover {
   box-shadow: 5px 5px black;
   transform: translate(-5px, -5px);
 }
-.card-wrapper.select-deck-card-wrapper.selected-deck:hover {
+
+/* .card-wrapper.select-deck-card-wrapper.selected-deck:hover {
   box-shadow: 0 0px black;
   transform: translate(0px, 0px);
   transition: 0s;
-}
+} */
 
 
 .content {
@@ -40,17 +46,43 @@
   border: 1px solid black;
   border-radius: 5px;
   box-shadow: 0 0 black;
+  user-select: none;
 }
 
 .card-back {
   background: lightslategray;
   transition: .3s;
-
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  color: white;
 }
 
-.card-back:hover {
-  background: lightblue;
+.emoji-card .card-back {
+  /* background: peachpuff; */
+  background: #ecb8ff;
+  font-size: 20px;
 }
+
+.emoji-card .card-front {
+  font-size: 25px;
+}
+.number-card .card-back {
+  font-family: sans-serif;
+  background: #62dffe;
+  color: black;
+}
+
+.game-card.selectable:hover .card-back {
+  background: #fefe71;
+}
+/* .game-card.number-card.selectable:hover .card-back {
+  background: #fefe71;
+}
+.game-card.emoji-card.selectable:hover .card-back {
+  background: #57d5ff;
+} */
 
 .card-front {
   display: flex;
@@ -76,10 +108,11 @@
   transition: transform .5s;
 }
 
-.card-wrapper.selected {
-  box-shadow: 0 0px black;
-  transform: translate(0px, 0px);
-  transition: 0s;
+.game-card.selected,
+.select-deck-card.selected-deck {
+  box-shadow: 0 0px black !important;
+  transform: translate(0px, 0px) !important;
+  transition: 0s !important;
 }
 
 .cleared {
@@ -96,7 +129,7 @@
 /* DECK SELECTION */
 
 .selected-deck .content {
-  animation: spin 3s .1s linear infinite;
+  animation: spin 3s  linear infinite;
 }
 
 @keyframes spin {

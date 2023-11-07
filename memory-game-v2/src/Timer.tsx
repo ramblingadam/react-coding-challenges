@@ -13,7 +13,11 @@ const Timer = ({timerRunning, resetTimer, setResetTimer, gameState, elapsedSecon
 
     if (timerRunning) {
       interval = setInterval(() => {
-        setElapsedSeconds((prevSeconds) => prevSeconds + 1);
+
+        setElapsedSeconds((prevSeconds:number) => {
+          if(prevSeconds >= 5999) return 5999
+          else return  prevSeconds + 1
+        });
         }, 1000);
     } else {
       clearInterval(interval);

@@ -34,10 +34,11 @@ const VICTORY_TEXT = 'YOU WIN!'
 
 export default function App() {
   const [gameState, setGameState] = useState('new')
+  const [newHighScore, setNewHighScore] = useState(false)
   
   const [deck, setDeck] = useState(buildDeck(18))
   const [size, setSize] = useState(new Array(6).fill(6))
-  const [selectedDeck, setSelectedDeck] = useState('numbers')
+  const [selectedDeck, setSelectedDeck] = useState('emoji')
   const [difficulty, setDifficulty] = useState(null)
   
   const [selected, setSelected] = useState(null)
@@ -161,7 +162,7 @@ export default function App() {
 
 
   return (
-    <main>
+    <main className='gradient-background'>
       <h1 className='title-wrapper'>  
         {APP_TITLE.split('').map((char, i) => (
           <TitleCard value={char} gameState={gameState} key={i}/>
@@ -173,18 +174,21 @@ export default function App() {
       {/* DECK SELECTION */}
       {gameState === 'new' && (
         <section className='deck-select-wrapper'>
-          <h2 className='deck-select-heading'>Choose Your Deck:</h2>
+          <h2 className='deck-select-heading'>Choose Your Deck</h2>
           <div className='deck-select-options'>
+            {/* Emoji */}
             <label className='deck-select-option'>
-              {/* Numbers */}
-              <DeckSelectCard value={12} selected={selectedDeck==='numbers'}/>
-              <input type='radio' name='deck-type' value='numbers' id='numbers' onClick={handleDeckSelect}/> 
-            </label>
-            <label className='deck-select-option'>
-              {/* Emoji */}
-              <DeckSelectCard value={'💖'} selected={selectedDeck==='emoji'}/>
+
+              <Card value={'⭐'} selected={selectedDeck==='emoji'} deckType={'emoji'} cardType={'select'}/>
               <input type='radio' name='deck-type' value='emoji' id='emoji' onClick={handleDeckSelect}/> 
             </label>
+            {/* Numbers */}
+            <label className='deck-select-option'>
+              
+              <Card value={12} selected={selectedDeck==='numbers'} deckType={'numbers'} cardType={'select'} />
+              <input type='radio' name='deck-type' value='numbers' id='numbers' onClick={handleDeckSelect}/> 
+            </label>
+
           </div>
 
         </section>
@@ -217,16 +221,17 @@ export default function App() {
           </h1>
         )}
 
+      {/* TIMER */}
+      {gameState === 'active' && (
+        <Timer timerRunning={timerRunning} resetTimer={resetTimer} setResetTimer={setResetTimer} gameState={gameState} elapsedSeconds={elapsedSeconds} setElapsedSeconds={setElapsedSeconds}/>
+      )}
       
       {/* HIGH SCORES */}
       {gameState !== 'active' && (
-        <HighScores difficulty={difficulty} gameState={gameState} elapsedSeconds={elapsedSeconds}/>
+        <HighScores difficulty={difficulty} gameState={gameState} elapsedSeconds={elapsedSeconds} newHighScore={newHighScore} setNewHighScore={setNewHighScore}/>
       )}
 
-      {/* TIMER */}
-      {gameState !== 'new' && (
-        <Timer timerRunning={timerRunning} resetTimer={resetTimer} setResetTimer={setResetTimer} gameState={gameState} elapsedSeconds={elapsedSeconds} setElapsedSeconds={setElapsedSeconds}/>
-      )}
+
 
       
       {/* GAME BOARD */}
@@ -235,7 +240,15 @@ export default function App() {
           {size.map((row, rowI) => (
             <div className='row' key={rowI}>
               {deck.slice(rowI * size.length, size.length * (rowI + 1)).map((card, i) => (
-                <Card key={i} value={card.value} selected={card.selected} cleared={card.cleared} handleCardClick={() => handleCardClick(card, rowI * size.length + i)} />
+                <Card
+                  key={i}
+                  value={card.value}
+                  selected={card.selected}
+                  cleared={card.cleared}
+                  deckType={selectedDeck}
+                  cardType={'game'}
+                  delayRunning={delayRunning}
+                  handleCardClick={() => handleCardClick(card, rowI * size.length + i)} />
               ))}
             </div>
           ))}
@@ -247,7 +260,7 @@ export default function App() {
     
       
       {/* RESET BUTTON */}
-      {gameState !== 'new' &&
+      {gameState !== 'new' && !newHighScore &&
         (
           <button
             onClick={handleResetClick}

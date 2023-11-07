@@ -26,6 +26,8 @@
 import {useState, useEffect} from 'react'
 import './HighScores.css'
 
+import Timer from './Timer.tsx'
+
 class Score {
   seconds: number
   name: string
@@ -37,15 +39,15 @@ class Score {
 
 
 const DEFAULT_SCORES = {
-    easy: new Array(10).fill(new Score(3600, 'Bob', '2023/1/1')),
-    medium: new Array(10).fill(new Score(3600, 'Bob', '2023/1/1')),
-    hard: new Array(10).fill(new Score(3600, 'Bob', '2023/1/1')),
+    easy: new Array(10).fill(new Score(3600, '---')),
+    medium: new Array(10).fill(new Score(3600, '---')),
+    hard: new Array(10).fill(new Score(3600, '---')),
   }
 
-const HighScores = ({difficulty, gameState, elapsedSeconds}) => {
-  const [scores, setScores] = useState(localStorage.getItem('scores') ? JSON.parse(localStorage.getItem('scores')) : DEFAULT_SCORES)
+const HighScores = ({difficulty, gameState, elapsedSeconds, newHighScore, setNewHighScore}) => {
+  const [scores, setScores] = useState(localStorage.getItem('scores') ? JSON.parse(localStorage.getItem('scores')!) : DEFAULT_SCORES)
 
-  const [newHighScore, setNewHighScore] = useState(false)
+
   const [nameEntry, setNameEntry] = useState('')
 
   // Put default scores in localStorage if not present.
@@ -69,7 +71,7 @@ const HighScores = ({difficulty, gameState, elapsedSeconds}) => {
 
   useEffect(() => {
     if(!newHighScore) return
-    document.querySelector('#high-score-name').focus()
+    document.querySelector('#high-score-name')!.focus()
   }, [newHighScore])
   
   const handleNameEntryChange = (e) => {
@@ -89,16 +91,32 @@ const HighScores = ({difficulty, gameState, elapsedSeconds}) => {
     setNewHighScore(false)
     localStorage.setItem('scores', JSON.stringify(allScores))
   }
+
+  const handleResetScoresClick = () => {
+    if(window.confirm('Really reset high scores?')) {
+      localStorage.setItem('scores', JSON.stringify(DEFAULT_SCORES)) 
+      setScores(DEFAULT_SCORES)
+    }
+  }
   
   return (
     <section className='high-scores-wrapper'>
       {gameState === 'new' && (
+      <div className='high-scores-heading-wrapper'>
+        <div className='high-scores-heading-deco'></div>
         <h2 className='high-scores-heading'>High Scores</h2>
+        <div className='high-scores-heading-deco'></div>
+      </div>
+        
       )}
+
+
+
+      
       <div className='high-score-tables-wrapper'>
         {(difficulty === 'easy' || difficulty === null) && (
         <ul className='easy scores-list-wrapper'>
-          <h3 className='high-scores-heading'>Easy</h3>
+          {/* <h3 className='high-scores-heading'>Easy</h3> */}
           {scores.easy.map((score, i) => (
           <li className='score-wrapper' key={i}>
             <span className='score-seconds'>
@@ -112,7 +130,7 @@ const HighScores = ({difficulty, gameState, elapsedSeconds}) => {
         
         {(difficulty === 'medium' || difficulty === null) && (
           <ul className='medium scores-list-wrapper'>
-            <h3 className='high-scores-heading'>Medium</h3>
+            {/* <h3 className='high-scores-heading'>Medium</h3> */}
             {scores.medium.map((score, i) => (
               <li className='score-wrapper' key={i}>
                 <span className='score-seconds'>
@@ -126,7 +144,7 @@ const HighScores = ({difficulty, gameState, elapsedSeconds}) => {
 
         {(difficulty === 'hard' || difficulty === null) && (
           <ul className='hard scores-list-wrapper'>
-            <h3 className='high-scores-heading'>Hard</h3>
+            {/* <h3 className='high-scores-heading'>Hard</h3> */}
             {scores.hard.map((score, i) => (
             <li className='score-wrapper' key={i}>
               <span className='score-seconds'>
@@ -137,22 +155,25 @@ const HighScores = ({difficulty, gameState, elapsedSeconds}) => {
             ))}
           </ul>
         )}
-
-      
       </div>
 
+      {gameState === 'new' && (
+      <button className='btn-score-reset' onClick={handleResetScoresClick}>Reset Scores</button>
+      )}
 
       {/* HIGH SCORE ENTRY */}
       {newHighScore && (
         <form className='new-high-score-form' onSubmit={handleHighScoreSubmit}>
-          
+
           <label className='new-high-score-label'>
-            <h2 className='high-scores-heading'>New High Score!</h2>
-            <input type='text' className='new-high-score-input' name='high-score-name' id='high-score-name'placeholder='Your Name' maxLength='5' value={nameEntry} onChange={handleNameEntryChange}></input>
+            <h2 className='high-scores-heading new-high-score-heading'>New High Score!</h2>
+            <Timer elapsedSeconds={elapsedSeconds}/>
+            <input type='text' className='new-high-score-input' name='high-score-name' id='high-score-name'placeholder='Your Name' maxLength='7' value={nameEntry} onChange={handleNameEntryChange}></input>
             <button>Submit</button>
           </label>
         </form>
       )}
+     
 
     </section>
   )
