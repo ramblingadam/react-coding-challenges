@@ -1,42 +1,48 @@
-import {useEffect, useState} from 'react'
+import { useEffect, useState } from 'react'
 
 interface TitleCardProps {
   value: string
-  gameState: string
+  gameState?: string
+  bannerType?: string
+  index?: number
 }
 
-const roll = (min, max) => {
+const roll = (min: number, max: number) => {
   return Math.floor(Math.random() * (max + 1 - min)) + min
 }
 
-
-const TitleCard: React.FC<TitleCardProps> = ({value, gameState, bannerType, index}) => {
+const TitleCard: React.FC<TitleCardProps> = ({
+  value,
+  gameState,
+  bannerType,
+  index,
+}) => {
   const [flipped, setFlipped] = useState(true)
   const [hovered, setHovered] = useState(false)
   const [spinning, setSpinning] = useState(false)
 
   let flipInterval = roll(2000, 5000)
 
-  let interval
-  let delay
-  
+  let interval: any = null
+  let delay: any = null
+
   useEffect(() => {
-    switch(bannerType) {
+    switch (bannerType) {
       case 'victory':
         clearInterval(interval)
         clearTimeout(delay)
         delay = setTimeout(() => {
           setFlipped(false)
           setSpinning(true)
-        }, 100 * index)
+        }, 100 * index!)
 
         break
       default:
-        if(gameState === 'active' || gameState === 'over') {
+        if (gameState === 'active' || gameState === 'over') {
           setFlipped(true)
           return
         }
-        if(hovered) {
+        if (hovered) {
           clearInterval(interval)
           clearTimeout(delay)
           setFlipped(true)
@@ -47,19 +53,18 @@ const TitleCard: React.FC<TitleCardProps> = ({value, gameState, bannerType, inde
               setFlipped((prevFlipState) => !prevFlipState)
             }, flipInterval)
           }, flipInterval)
-
         }
         break
     }
 
     return () => {
       clearInterval(interval)
-      clearTimeout(delay)}
-  }, [hovered, gameState])  
+      clearTimeout(delay)
+    }
+  }, [hovered, gameState])
 
-
-  const handleCardHover = (hovered) => {
-    if(bannerType === 'victory') return
+  const handleCardHover = (hovered: boolean) => {
+    if (bannerType === 'victory') return
     switch (hovered) {
       case true:
         setHovered(true)
@@ -71,11 +76,12 @@ const TitleCard: React.FC<TitleCardProps> = ({value, gameState, bannerType, inde
         console.log(`Shouldn't be here!`)
     }
   }
-  
+
   return (
-    <div 
-      className={`card-wrapper banner-card${flipped ? ' selected' : ''}${spinning ? ' spin': ''}`
-      } 
+    <div
+      className={`card-wrapper banner-card${flipped ? ' selected' : ''}${
+        spinning ? ' spin' : ''
+      }`}
       onMouseEnter={() => handleCardHover(true)}
       onMouseLeave={() => handleCardHover(false)}
     >

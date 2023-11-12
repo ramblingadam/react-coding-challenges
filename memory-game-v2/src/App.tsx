@@ -18,44 +18,46 @@ need index to keeptrack of which was clicked on first, so that clicking on it ag
 
 */
 
-
 import './App.css'
 import { useState } from 'react'
 
-import buildDeck from './utils.tsx'
-import Card from './Card.tsx'
-import Timer from './Timer.tsx'
-import TitleCard from './TitleCard.tsx'
-import DeckSelectCard from './DeckSelectCard.tsx'
-import HighScores from './HighScores.tsx'
+import { buildDeck } from './utils'
+import Card from './Card'
+import Timer from './Timer'
+import TitleCard from './TitleCard'
+import HighScores from './HighScores'
 
+// TYPES
+import { CardType, DeckType, SelectableDeck } from './utils'
+type DifficultyType = null | 'easy' | 'medium' | 'hard'
+type selectedCardType = {
+  value: number | string
+  selected: boolean
+  cleared: boolean
+  i?: number
+}
+
+// CONST VARS
 const APP_TITLE = 'MEMORIA'
 const VICTORY_TEXT = 'YOU WIN!'
 
 export default function App() {
   const [gameState, setGameState] = useState('new')
   const [newHighScore, setNewHighScore] = useState(false)
-  
-  const [deck, setDeck] = useState(buildDeck(18))
+
+  const [deck, setDeck] = useState<null | DeckType>(null)
   const [size, setSize] = useState(new Array(6).fill(6))
-  const [selectedDeck, setSelectedDeck] = useState('emoji')
-  const [difficulty, setDifficulty] = useState(null)
-  
-  const [selected, setSelected] = useState(null)
+  const [selectedDeck, setSelectedDeck] = useState<SelectableDeck>('emoji')
+  const [difficulty, setDifficulty] = useState<DifficultyType>(null)
+
+  const [selected, setSelected] = useState<selectedCardType | null>(null)
   const [delayRunning, setDelayRunning] = useState(false)
 
   const [timerRunning, setTimerRunning] = useState(false)
   const [resetTimer, setResetTimer] = useState(true)
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
-  
 
-
-
-
-
-  
-
-  const handleDifficultyClick = (difficulty: string) => {
+  const handleDifficultyClick = (difficulty: DifficultyType) => {
     switch (difficulty) {
       case 'easy':
         console.log('Easy selected.')
@@ -83,20 +85,18 @@ export default function App() {
     setTimerRunning(true)
   }
 
-
   const handleResetClick = () => {
     setGameState('new')
     setTimerRunning(false)
     setDifficulty(null)
   }
 
-
-  const handleCardClick = (card, i) => {
+  const handleCardClick = (card: CardType, i: number) => {
     if (delayRunning) return
 
     if (selected === null) {
       // const deckCopy = deck
-      const deckCopy = deck.map((card, cardI) => {
+      const deckCopy = deck!.map((card, cardI) => {
         if (cardI === i) {
           return { ...card, selected: true }
         } else return card
@@ -106,13 +106,12 @@ export default function App() {
       return
     }
 
-
     if (selected.i === i) {
       // console.log('already selected')
       return
     } else {
       setDelayRunning(true)
-      let deckCopy = deck.map((card, cardI) => {
+      let deckCopy = deck!.map((card, cardI) => {
         if (cardI === i) {
           return { ...card, selected: true }
         } else return card
@@ -124,11 +123,11 @@ export default function App() {
       // console.log('match found!')
 
       setTimeout(() => {
-        const deckCopy = deck.map((card) => {
+        const deckCopy = deck!.map((card) => {
           if (card.value === selected.value) return { ...card, cleared: true }
           else return card
         })
-        if (deckCopy.every(card => card.cleared === true)) {
+        if (deckCopy.every((card) => card.cleared === true)) {
           console.log('YOU WIN!')
           setTimerRunning(false)
           setTimeout(() => {
@@ -140,10 +139,11 @@ export default function App() {
         setSelected(null)
         setDelayRunning(false)
       }, 800)
-    } else { //mismatch
+    } else {
+      //mismatch
       // console.log('mismatch!')
       setTimeout(() => {
-        const deckCopy = deck.map((card) => {
+        const deckCopy = deck!.map((card) => {
           return { ...card, selected: false }
         })
         setDeck(deckCopy)
@@ -151,26 +151,45 @@ export default function App() {
         setDelayRunning(false)
       }, 800)
     }
-
   }
 
-  const handleDeckSelect = (e) => {
+  const handleDeckSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.value)
-    setSelectedDeck(e.target.value)
+    setSelectedDeck(e.target.value as SelectableDeck)
   }
-
-
 
   return (
     <main className='gradient-background'>
-      <h1 className='title-wrapper'>  
+      <h1 className='title-wrapper'>
         {APP_TITLE.split('').map((char, i) => (
-          <TitleCard value={char} gameState={gameState} key={i}/>
+          <TitleCard
+            value={char}
+            gameState={gameState}
+            key={i}
+          />
         ))}
       </h1>
+      <h2 className='social-icons'>
+        <a
+          href='https://github.com/ramblingadam'
+          target='_blank'
+        >
+          <i className='fa-brands fa-github'></i>
+        </a>
+        <a
+          href='https://twitter.com/ramblingadam'
+          target='_blank'
+        >
+          <i className='fa-brands fa-twitter'></i>
+        </a>
+        <a
+          href='https://www.linkedin.com/in/adam-morsa/'
+          target='_blank'
+        >
+          <i className='fa-brands fa-linkedin'></i>
+        </a>
+      </h2>
 
-
-      
       {/* DECK SELECTION */}
       {gameState === 'new' && (
         <section className='deck-select-wrapper'>
@@ -178,99 +197,139 @@ export default function App() {
           <div className='deck-select-options'>
             {/* Emoji */}
             <label className='deck-select-option'>
-
-              <Card value={'⭐'} selected={selectedDeck==='emoji'} deckType={'emoji'} cardType={'select'}/>
-              <input type='radio' name='deck-type' value='emoji' id='emoji' onClick={handleDeckSelect}/> 
+              <Card
+                value={'⭐'}
+                selected={selectedDeck === 'emoji'}
+                deckType={'emoji'}
+                cardType={'select'}
+              />
+              <input
+                type='radio'
+                name='deck-type'
+                value='emoji'
+                id='emoji'
+                onChange={handleDeckSelect}
+              />
             </label>
             {/* Numbers */}
             <label className='deck-select-option'>
-              
-              <Card value={12} selected={selectedDeck==='numbers'} deckType={'numbers'} cardType={'select'} />
-              <input type='radio' name='deck-type' value='numbers' id='numbers' onClick={handleDeckSelect}/> 
+              <Card
+                value={12}
+                selected={selectedDeck === 'numbers'}
+                deckType={'numbers'}
+                cardType={'select'}
+              />
+              <input
+                type='radio'
+                name='deck-type'
+                value='numbers'
+                id='numbers'
+                onChange={handleDeckSelect}
+              />
             </label>
-
           </div>
-
         </section>
       )}
 
       {/* DIFFICULTY SELECT */}
-      {gameState === 'new' &&
-        (
-          <section className='difficulty-select'>
-            <button 
-              onClick={() => handleDifficultyClick('easy')} 
-              className='btn-easy'>Easy</button>
-            <button 
-              onClick={() => handleDifficultyClick('medium')} 
-              className='btn-medium'>Medium</button>
-            <button 
-              onClick={() => handleDifficultyClick('hard')} 
-              className='btn-hard'>Hard</button>
-          </section>
-        )
-      }
-
+      {gameState === 'new' && (
+        <section className='difficulty-select'>
+          <button
+            onClick={() => handleDifficultyClick('easy')}
+            className='btn-easy'
+          >
+            Easy
+          </button>
+          <button
+            onClick={() => handleDifficultyClick('medium')}
+            className='btn-medium'
+          >
+            Medium
+          </button>
+          <button
+            onClick={() => handleDifficultyClick('hard')}
+            className='btn-hard'
+          >
+            Hard
+          </button>
+        </section>
+      )}
 
       {/* VICTORY TEXT */}
-        {gameState === 'over' && (
-          <h1 className='victory-text'>
-            {VICTORY_TEXT.split('').map((char, i) => (
-            <TitleCard value={char} key={i} bannerType={'victory'} index={i}/>
-            ))}
-          </h1>
-        )}
+      {gameState === 'over' && (
+        <h1 className='victory-text'>
+          {VICTORY_TEXT.split('').map((char, i) => (
+            <TitleCard
+              value={char}
+              key={i}
+              bannerType={'victory'}
+              index={i}
+            />
+          ))}
+        </h1>
+      )}
 
       {/* TIMER */}
       {gameState === 'active' && (
-        <Timer timerRunning={timerRunning} resetTimer={resetTimer} setResetTimer={setResetTimer} gameState={gameState} elapsedSeconds={elapsedSeconds} setElapsedSeconds={setElapsedSeconds}/>
+        <Timer
+          timerRunning={timerRunning}
+          resetTimer={resetTimer}
+          setResetTimer={setResetTimer}
+          gameState={gameState}
+          elapsedSeconds={elapsedSeconds}
+          setElapsedSeconds={setElapsedSeconds}
+        />
       )}
-      
+
       {/* HIGH SCORES */}
       {gameState !== 'active' && (
-        <HighScores difficulty={difficulty} gameState={gameState} elapsedSeconds={elapsedSeconds} newHighScore={newHighScore} setNewHighScore={setNewHighScore}/>
+        <HighScores
+          difficulty={difficulty}
+          gameState={gameState}
+          elapsedSeconds={elapsedSeconds}
+          newHighScore={newHighScore}
+          setNewHighScore={setNewHighScore}
+        />
       )}
 
-
-
-      
       {/* GAME BOARD */}
       {gameState === 'active' && (
         <section className='board-wrapper'>
           {size.map((row, rowI) => (
-            <div className='row' key={rowI}>
-              {deck.slice(rowI * size.length, size.length * (rowI + 1)).map((card, i) => (
-                <Card
-                  key={i}
-                  value={card.value}
-                  selected={card.selected}
-                  cleared={card.cleared}
-                  deckType={selectedDeck}
-                  cardType={'game'}
-                  delayRunning={delayRunning}
-                  handleCardClick={() => handleCardClick(card, rowI * size.length + i)} />
-              ))}
+            <div
+              className='row'
+              key={rowI}
+            >
+              {deck!
+                .slice(rowI * size.length, size.length * (rowI + 1))
+                .map((card, i) => (
+                  <Card
+                    key={i}
+                    value={card.value}
+                    selected={card.selected}
+                    cleared={card.cleared}
+                    deckType={selectedDeck}
+                    cardType={'game'}
+                    delayRunning={delayRunning}
+                    handleCardClick={() =>
+                      handleCardClick(card, rowI * size.length + i)
+                    }
+                  />
+                ))}
             </div>
           ))}
         </section>
       )}
 
-  
-
-    
-      
       {/* RESET BUTTON */}
-      {gameState !== 'new' && !newHighScore &&
-        (
-          <button
-            onClick={handleResetClick}
-            className={`btn-reset`}
-          >
-            Reset
-          </button>
-        )
-      }
-
+      {gameState !== 'new' && !newHighScore && (
+        <button
+          onClick={handleResetClick}
+          className={`btn-reset`}
+        >
+          Reset
+        </button>
+      )}
     </main>
   )
 }
